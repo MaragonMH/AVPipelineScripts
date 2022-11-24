@@ -25,4 +25,8 @@ echo Uninstall: run removePatchFinal.bat
 ) > mods\%VAR%\READ-%VAR%.txt
 git -C temp diff Start..HEAD > mods\%VAR%\Code\%VAR%.patch
 mods\bsdiff.exe backup\%EXEC% ..\%EXEC% mods\%VAR%\%VAR%.patch
+
+:: Create Zip
+powershell Compress-Archive -f mods/%VAR%/* mods/%VAR%/%VAR%.zip
+
 timeout 5
