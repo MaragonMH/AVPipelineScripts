@@ -348,3 +348,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+mods/*/
+temp/
+backup/
+!backup/Placeholder.md
+*.patch
