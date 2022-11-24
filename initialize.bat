@@ -24,8 +24,7 @@ dotnet restore temp
 
 :: Change build directory to original directory for convienience in vs
 for /F "tokens=*" %%i in (temp\%NAME%.csproj) do (
-if not "%%i" equ "<TargetFramework>net40</TargetFramework>" (echo %%i)
-if not "%%i" equ "<TargetFramework>net45</TargetFramework>" (echo %%i)
+if not "%%i" equ "<TargetFramework>net40</TargetFramework>" if not "%%i" equ "<TargetFramework>net45</TargetFramework>" (echo %%i)
 if "%%i" equ "<AssemblyName>%NAME%</AssemblyName>" (echo ^<OutDir^>../../^</OutDir^> & echo ^<TargetFramework^>net481^</TargetFramework^>)) >> temp.txt
 move /y temp.txt temp\%NAME%.csproj
 
