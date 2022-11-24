@@ -2,7 +2,7 @@
 echo This Script will take a few minutes to complete
 
 :: Get Executeable
-for /f %%i in ('dir .. /b *.exe') do set NAME=%%~ni
+for /f %%i in ('dir /b ..\*.exe') do set NAME=%%~ni
 set EXEC=%NAME%.exe 
 
 :: Do certain steps only once

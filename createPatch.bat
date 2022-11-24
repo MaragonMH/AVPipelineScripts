@@ -1,5 +1,5 @@
 :: Get Executeable
-for /f %%i in ('dir .. /b *.exe') do set NAME=%%~ni
+for /f %%i in ('dir /b ..\*.exe') do set NAME=%%~ni
 set EXEC=%NAME%.exe 
 
 for /f %%i in ('git -C temp rev-parse --abbrev-ref HEAD') do set VAR=%%i
