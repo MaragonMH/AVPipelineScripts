@@ -1,0 +1,42 @@
+GENERAL:
+This is the prototyp of the AV patcher for modding purposes.
+Currently it contains only windows script files and the patching files.
+It shouldn't be too difficult to adopt the scripts to other OS's.
+
+PREREQUISITES:
+Make sure to check the "Add to path" checkbox if there is one:
+-git https://git-scm.com/downloads
+-dotnet framework sdk https://dotnet.microsoft.com/en-us/download/dotnet-framework/thank-you/net481-developer-pack-offline-installer
+-dotnet https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/sdk-6.0.401-windows-x64-installer
+-dotnet core https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-3.1.31-windows-x64-installer
+Should be installed:
+-ilspycmd Automatically installed if dotnet is installed
+-tar Included in the current version of Windows 10 and newer
+
+INSTRUCTIONS:
+Make sure that you installed the latest versions and added it to the path.
+Copy this folder directly in the AV folder if your game location is admin restricted chose a different location. You need to copy all your game files to do so (For example to the Desktop).
+Open the "Mods" folder
+Execute intitialize.bat. You need to do this step only once
+Drop the *.patch files into the "Mods" folder.
+If you add/remove a *.patch file you need to execute the patchGame.bat to add it to your game.
+If you want to undo all of it execute the restoreGame.bat.
+
+OVERVIEW:
+initialize.bat: Decompiles your game, creates a backup of it and creates a git repository from it. Use this first and only once.
+applyPatches.bat: Add all code patches (*.patch) to your codebase as a seperate git branch. Drop a *.patch file into the Mods folder beforehand.
+createPatch.bat: Compiles the current git branch and overwrites the AV executeable. Additionally it creates the packed files, in the mods/brachname folder. Just zip them and you can publish your mod.
+restoreGame.bat: Removes all the temporary files and restores your game to the default. Use this with caution.
+update.bat: Use, whenever a AV version update occurs, to adjust your mod to the new version. Executes all other scripts in order.
+
+ADVANCED:
+Behind the scenes we are decompiling the AV.exe changing some code and recompiling it again.
+The patches are applied to a git repository with the decompiled source, which is located in the temp folder.
+The backup of the original AV.exe is in the backup.
+In the default git configuration there are two tags for the unmodified source and the compileable source.
+The patches are applied consecutively ontop of the master/Start.
+If you want to create a Mod it is recommended to create a new branch with the name of the mod.
+To improve the experience there are two scripts.
+createPatch.bat creates a new patchfile from the difference between the current HEAD and the master/Start and names it accordingly to the branch.
+refinePatch.bat switches to the master/Start and patches the source with the specified file from this folder.
+Furthermore it creates a new branch with the respective name.

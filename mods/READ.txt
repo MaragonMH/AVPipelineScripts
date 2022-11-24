@@ -1,0 +1,3 @@
+:: Just for reference. Created by createPatch.bat
+Install: run applyPatchFinal as Admin
+Uninstall: run removePatchFinal

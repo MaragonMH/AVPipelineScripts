@@ -1,0 +1,34 @@
+diff --git a/OuterBeyond/Source/Engine/Tracker.cs b/OuterBeyond/Source/Engine/Tracker.cs
+index 518afa7..ad57e7a 100644
+--- a/OuterBeyond/Source/Engine/Tracker.cs
++++ b/OuterBeyond/Source/Engine/Tracker.cs
+@@ -35,7 +35,7 @@ namespace OuterBeyond.Source.Engine
+ 
+ 		internal async Task Save()
+ 		{
+-			await ss.Send(JsonConvert.SerializeObject(trackerData));
++			ss.Send(JsonConvert.SerializeObject(trackerData));
+ 			mPreviousArea = saveData.GetCurrentAutoMapName();
+ 			mPreviousHP = saveData.GetHitPoints();
+ 			mPreviousScreen = saveData.mScreenCount;
+diff --git a/OuterBeyond/THTrace.cs b/OuterBeyond/THTrace.cs
+index 579f8b1..82e8407 100644
+--- a/OuterBeyond/THTrace.cs
++++ b/OuterBeyond/THTrace.cs
+@@ -115,7 +115,7 @@ namespace OuterBeyond
+ 
+ 		private float mLastGroundedY;
+ 
+-		public THTrace(ContentManager content, Vector2 position, THSaveData saveData)
++		public THTrace(ContentManager content, Vector2 position, THSaveData saveData) : base(content, position, saveData)
+ 		{
+ 			GlitchGhost[] array = new GlitchGhost[3];
+ 			GlitchGhost glitchGhost = new GlitchGhost
+@@ -159,7 +159,6 @@ namespace OuterBeyond
+ 			mGlitchedFollowers = new List<THCreature>();
+ 			mAutoGrappleAim = true;
+ 			mLastGroundedY = float.MaxValue;
+-			base._002Ector(content, position, saveData);
+ 			mHatchState = new THTraceHatchState();
+ 			mIdleState = new THTraceIdleState();
+ 			mCrouchState = new THTraceCrouchState();
