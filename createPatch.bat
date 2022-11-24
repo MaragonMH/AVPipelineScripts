@@ -42,11 +42,7 @@ copy mods *.* mods\%FULLNAME%
 echo bspatch.exe Old%EXEC% %EXEC% %FULLNAME%.patch
 ) > mods\%FULLNAME%\applyPatch-%MODNAME%.bat
 
-(echo copy Old%EXEC% %EXEC%
-) > mods\%FULLNAME%\removePatchFinal.bat
-
 (echo Install: run applyPatch-%MODNAME%.bat as Admin
-echo Uninstall: run removePatchFinal.bat
 ) > mods\%FULLNAME%\READ-%FULLNAME%.txt
 
 git -C temp diff Start..HEAD > mods\%FULLNAME%\Code\%FULLNAME%.patch
