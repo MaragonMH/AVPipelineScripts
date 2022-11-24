@@ -42,9 +42,10 @@ git -C temp add -A
 git -C temp commit -m "Initialized Repo"
 git -C temp tag "Untouched" HEAD
 
+if "%NAME%" equ "AxiomVerge1" (
 git -C temp apply -C 1 --recount --reject --ignore-whitespace ../startAV1.diff 
 git -C temp add -A
-git -C temp commit -m "Compileable Repo"
+git -C temp commit -m "Compileable Repo")
 git -C temp tag "Start" HEAD)
 
 echo Finished
