@@ -1,3 +1,5 @@
+@echo off
+
 :: Apply patches
 for /f %%i in ('dir /b *.patch') do (set VAR=%%~ni
 git -C temp checkout master

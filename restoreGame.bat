@@ -1,3 +1,5 @@
+@echo off
+
 :: Get Executeable
 for /f %%i in ('dir /b ..\*.exe') do set NAME=%%~ni
 set EXEC=%NAME%.exe
