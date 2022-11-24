@@ -13,6 +13,14 @@ Should be installed:
 -ilspycmd Automatically installed if dotnet is installed
 -tar Included in the current version of Windows 10 and newer
 
+NOTES:
+If you develop mods, please stick to the following Convention for the names, because this is also integrated into the scripts.
+Zip-Structure: Game-ModName-ModVersion-Platform-GameVersion.zip
+Zip-Example: AV1-Multiplayer-0.4.1-Steam-1.58.zip
+The ModName is represented by your git branch name
+The ModVersion is represented by the git tag at the current commit. For that reason. DO NOT USE TAGS, unless you set a version. Use only 2 dots.
+Tag Example: V1.0.0
+
 INSTRUCTIONS:
 Make sure that you installed the latest versions and added it to the path.
 Copy this folder directly in the AV folder if your game location is admin restricted chose a different location. You need to copy all your game files to do so (For example to the Desktop).
