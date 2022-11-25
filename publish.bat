@@ -50,7 +50,33 @@ copy mods *.* mods\%FULLNAME%
 
 :: Custom files
 :: Patch the most recent applicable file, otherwise give specific error
-(echo bspatch.exe %EXEC% %FULLNAME%.exe %FULLNAME%.patch
+(
+    echo @echo off
+
+    :: Get Executeable
+    echo for /f %%i in ('dir /b ..\AxiomVerge*.exe') do set NAME=%%~ni
+    echo set EXEC=%NAME%.exe 
+
+    :: Get Game and Version
+    echo if "%NAME%" equ "AxiomVerge" set GAME=AV1
+    echo if "%NAME%" equ "AxiomVerge2" set GAME=AV2
+    echo for /f %%i in ('powershell "(gi ../AxiomVerge.exe).VersionInfo.ProductVersion"') do set GAMEVERSION=%%i
+
+    :: Get Platform (Steam/Epic)
+    echo if exist ../CSteamworks.bundle/ (set PLATFORM=Steam ) else set PLATFORM=Epic
+
+    :: Get Patch
+    echo for /f %%i in ('dir /b %GAME%-%MODNAME%-*-%PLATFORM%-%GAMEVERSION%.patch') do (echo Applying patch: %%~ni
+    echo for /F "tokens=1-5 delims=-" %%j in (%LASTMODVERSION%) do ( set PATCHVERSION
+    )
+
+    echo echo GameError: Difference between Patch () and Game (%GAME%). & exit /b 1
+    echo echo PlatformError: Difference between Patch () and Game (%PLATFORM%). & exit /b 2
+    echo echo GameVersionError: Difference between Patch () and Game (V%GAMEVERSION%). & exit /b 3
+    echo echo ModNameError: Patch file for this mod does not exist (). & exit /b 4
+
+    echo bspatch.exe %EXEC% %FULLNAME%.exe %FULLNAME%.patch
+    echo echo Sucess!!.
 ) > mods\%FULLNAME%\applyPatch-%MODNAME%.bat
 
 (echo Install: run applyPatch-%MODNAME%.bat as Admin
