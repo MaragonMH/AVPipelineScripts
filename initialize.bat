@@ -9,7 +9,7 @@ set EXEC=%NAME%.exe
 if "%NAME%" equ "AxiomVerge" set GAME=AV1
 if "%NAME%" equ "AxiomVerge2" set GAME=AV2
 for /f %%i in ('powershell "(gi ../AxiomVerge.exe).VersionInfo.ProductVersion"') do set GAMEVERSION=%%i
-set REPO=%GAME%-%GAMEVERSION%
+set REPO=!GAME!-!GAMEVERSION!
 
 :: Do certain steps only once
 IF NOT EXIST %REPO%\ (

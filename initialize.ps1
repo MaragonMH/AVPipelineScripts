@@ -8,7 +8,7 @@ $EXEC = ($NAME + ".exe")
 if ($NAME -eq "AxiomVerge"){ $GAME="AV1" }
 if ($NAME -eq "AxiomVerge2"){ $GAME="AV2" }
 $GAMEVERSION = (Get-Item ../AxiomVerge.exe).VersionInfo.ProductVersion
-$REPO = ($GAME + "-" + $GAMEVERSION)
+$REPO = ("$GAME-$GAMEVERSION")
 
 # Do certain steps only once
 if (!(Test-Path $REPO)){
@@ -18,22 +18,29 @@ if (!(Test-Path $REPO)){
 
 	# Decompile executable
 	New-ITEM $REPO
-	ilspycmd "../" + $EXEC "-o" %REPO% -p -lv CSharp7_3
+	ilspycmd ../$EXEC -o $REPO -p -lv CSharp7_3
 
-	:: Backup original executable
-	mkdir backup
-	IF NOT EXIST backup\%EXEC% copy ..\%EXEC% backup\%GAME%-%GAMEVERSION%.exe
+	# Backup original executable
+	New-ITEM backup
+	if (!(Test-Path backup\$EXEC)){ Copy-Item ..\$EXEC backup\$GAME-$GAMEVERSION.exe }
 
-	:: Restore project
-	dotnet restore %REPO%
+	# Restore project
+	dotnet restore $REPO
 
-	:: Change build directory to original directory for convienience in vs
-	set BRANCH=$^(^[System.IO.File^]::ReadAlltext^('$^(GitRoot^)\.git\HEAD'^).Replace^('ref: refs/heads/', ''^).Trim^(^)^)
+	# Change build directory to original directory for convienience in vs
+	$BRANCH = '$([System.IO.File]::ReadAlltext("$(GitRoot)\.git\HEAD").Replace("ref: refs/heads/", "").Trim())'
+	$FILECONTENT = Get-Content $REPO\$Name.csproj
+	$FILECONTENT = $FILECONTENT.Replace("<TargetFramework>net40</TargetFramework>", "<TargetFramework>net481</TargetFramework>")
+	$FILECONTENT = $FILECONTENT.Replace("<TargetFramework>net45</TargetFramework>", "<TargetFramework>net481</TargetFramework>")
+	$FILECONTENT = $FILECONTENT.Replace("<LangVersion>7.3</LangVersion>", "<LangVersion>latest</LangVersion>")
+	$FILECONTENT = $FILECONTENT.Replace("<AssemblyName>$GAME-$GAMEVERSION-$BRANCH</AssemblyName>", "<AssemblyName>$GAME-$GAMEVERSION-$BRANCH</AssemblyName>")
+	$FILECONTENT | Set-Content $REPO\$Name.csproj
+
 	for /F "tokens=*" %%i in (%REPO%\%NAME%.csproj) do (
-	if not "%%i" equ "<TargetFramework>net40</TargetFramework>" if not "%%i" equ "<TargetFramework>net45</TargetFramework>" if not "%%i" equ "<LangVersion>7.3</LangVersion>" (echo %%i
+	if not "%%i" equ  if not "%%i" equ "<TargetFramework>net45</TargetFramework>" if not "%%i" equ "<LangVersion>7.3</LangVersion>" (echo %%i
 	) else echo <LangVersion>latest</LangVersion>
 	if "%%i" equ "<AssemblyName>%GAME%-%GAMEVERSION%-%BRANCH%</AssemblyName>" (echo ^<OutDir^>../../^</OutDir^> & echo ^<TargetFramework^>net481^</TargetFramework^>)) >> temp.txt
-	move /y temp.txt %REPO%\%NAME%.csproj
+	Move-Item /y temp.txt %REPO%\%NAME%.csproj
 
 	:: Unzip the EmbeddedContent Files
 	cd %REPO%/OuterBeyond
