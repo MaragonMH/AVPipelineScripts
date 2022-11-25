@@ -31,8 +31,7 @@ dotnet restore %REPO%
 :: Change build directory to original directory for convienience in vs
 set BRANCH=$^(^[System.IO.File^]::ReadAlltext^('$^(GitRoot^)\.git\HEAD'^).Replace^('ref: refs/heads/', ''^).Trim^(^)^)
 for /F "tokens=*" %%i in (%REPO%\%NAME%.csproj) do (
-if not "%%i" equ "<TargetFramework>net40</TargetFramework>" if not "%%i" equ "<TargetFramework>net45</TargetFramework>" if not "%%i" equ "<LangVersion>7.3</LangVersion>" (echo %%i
-) else echo <LangVersion>latest</LangVersion>
+if not "%%i" equ "<TargetFramework>net40</TargetFramework>" if not "%%i" equ "<TargetFramework>net45</TargetFramework>" echo %%i
 if "%%i" equ "<AssemblyName>%GAME%-%GAMEVERSION%-%BRANCH%</AssemblyName>" (echo ^<OutDir^>../../^</OutDir^> & echo ^<TargetFramework^>net481^</TargetFramework^>)) >> temp.txt
 move /y temp.txt %REPO%\%NAME%.csproj
 
