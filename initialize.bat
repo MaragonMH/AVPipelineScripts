@@ -1,4 +1,5 @@
 @echo off
+setlocal EnableDelayedExpansion
 echo This Script will take a few minutes to complete
 
 :: Get Executeable
