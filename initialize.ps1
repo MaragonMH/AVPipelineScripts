@@ -1,4 +1,4 @@
-Write-Output This Script will take a few minutes to complete
+Write-Output "This Script will take a few minutes to complete"
 
 # Get Executeable
 $NAME = (Get-ChildItem ..\AxiomVerge*.exe).BaseName
@@ -21,7 +21,7 @@ if (!(Test-Path $REPO)){
 	ilspycmd ../$EXEC -o $REPO -p -lv CSharp7_3
 
 	# Backup original executable
-	New-Item backup
+	if (!(Test-Path backup)){ New-Item backup }
 	if (!(Test-Path backup\$EXEC)){ Copy-Item ..\$EXEC backup\$GAME-$GAMEVERSION.exe }
 
 	# Restore project
@@ -38,7 +38,7 @@ if (!(Test-Path $REPO)){
 
 	# Unzip the EmbeddedContent Files
 	Set-Location $REPO/OuterBeyond
-	New-Item EmbeddedContent.Content
+	if (!(Test-Path EmbeddedContent.Content)){ New-Item EmbeddedContent.Content }
 	Set-Location EmbeddedContent.Content
 	tar -xf ../EmbeddedContent.Content.zip
 	Set-Location ../../../
@@ -58,5 +58,5 @@ if (!(Test-Path $REPO)){
 	git -C $REPO tag "Start" HEAD
 }
 
-Write-Output Finished
+Write-Output "Finished"
 timeout 5
