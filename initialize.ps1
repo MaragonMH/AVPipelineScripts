@@ -2,13 +2,13 @@ Write-Output "This Script will take a few minutes to complete"
 
 # Get Executeable
 $NAME = (Get-ChildItem ..\AxiomVerge*.exe).BaseName
-$EXEC = ($NAME + ".exe")
+$EXEC = "$NAME.exe"
 
 # Get Game and Version
 if ($NAME -eq "AxiomVerge"){ $GAME="AV1" }
 if ($NAME -eq "AxiomVerge2"){ $GAME="AV2" }
-$GAMEVERSION = (Get-Item ../AxiomVerge.exe).VersionInfo.ProductVersion
-$REPO = ("$GAME-$GAMEVERSION")
+$GAMEVERSION = "V$((Get-Item ../AxiomVerge*.exe).VersionInfo.ProductVersion)"
+$REPO = "$GAME-$GAMEVERSION"
 
 # Do certain steps only once
 if (!(Test-Path $REPO)){
@@ -21,7 +21,7 @@ if (!(Test-Path $REPO)){
 	ilspycmd ../$EXEC -o $REPO -p -lv CSharp7_3
 
 	# Backup original executable
-	if (!(Test-Path backup)){ New-Item backup -ItemType Directory }
+	if (!(Test-Path backup\)){ New-Item backup -ItemType Directory }
 	if (!(Test-Path backup\$EXEC)){ Copy-Item ..\$EXEC backup\$GAME-$GAMEVERSION.exe }
 
 	# Restore project
@@ -38,7 +38,7 @@ if (!(Test-Path $REPO)){
 
 	# Unzip the EmbeddedContent Files
 	Set-Location $REPO/OuterBeyond
-	if (!(Test-Path EmbeddedContent.Content)){ New-Item EmbeddedContent.Content -ItemType Directory }
+	if (!(Test-Path EmbeddedContent.Content\)){ New-Item EmbeddedContent.Content -ItemType Directory }
 	Set-Location EmbeddedContent.Content
 	tar -xf ../EmbeddedContent.Content.zip
 	Set-Location ../../../
