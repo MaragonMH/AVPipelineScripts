@@ -17,11 +17,11 @@ if (!(Test-Path $REPO)){
 	dotnet tool install --global ilspycmd --version 7.1.0.6543
 
 	# Decompile executable
-	New-ITEM $REPO
+	New-Item $REPO
 	ilspycmd ../$EXEC -o $REPO -p -lv CSharp7_3
 
 	# Backup original executable
-	New-ITEM backup
+	New-Item backup
 	if (!(Test-Path backup\$EXEC)){ Copy-Item ..\$EXEC backup\$GAME-$GAMEVERSION.exe }
 
 	# Restore project
@@ -33,35 +33,29 @@ if (!(Test-Path $REPO)){
 	$FILECONTENT = $FILECONTENT.Replace("<TargetFramework>net40</TargetFramework>", "<TargetFramework>net481</TargetFramework>")
 	$FILECONTENT = $FILECONTENT.Replace("<TargetFramework>net45</TargetFramework>", "<TargetFramework>net481</TargetFramework>")
 	$FILECONTENT = $FILECONTENT.Replace("<LangVersion>7.3</LangVersion>", "<LangVersion>latest</LangVersion>")
-	$FILECONTENT = $FILECONTENT.Replace("<AssemblyName>$GAME-$GAMEVERSION-$BRANCH</AssemblyName>", "<AssemblyName>$GAME-$GAMEVERSION-$BRANCH</AssemblyName>")
+	$FILECONTENT = $FILECONTENT.Replace("<AssemblyName>$NAME</AssemblyName>", "<AssemblyName>$GAME-$GAMEVERSION-$BRANCH</AssemblyName>`r`n<OutDir>../../</OutDir>")
 	$FILECONTENT | Set-Content $REPO\$Name.csproj
 
-	for /F "tokens=*" %%i in (%REPO%\%NAME%.csproj) do (
-	if not "%%i" equ  if not "%%i" equ "<TargetFramework>net45</TargetFramework>" if not "%%i" equ "<LangVersion>7.3</LangVersion>" (echo %%i
-	) else echo <LangVersion>latest</LangVersion>
-	if "%%i" equ "<AssemblyName>%GAME%-%GAMEVERSION%-%BRANCH%</AssemblyName>" (echo ^<OutDir^>../../^</OutDir^> & echo ^<TargetFramework^>net481^</TargetFramework^>)) >> temp.txt
-	Move-Item /y temp.txt %REPO%\%NAME%.csproj
-
-	:: Unzip the EmbeddedContent Files
-	cd %REPO%/OuterBeyond
-	mkdir EmbeddedContent.Content
-	cd EmbeddedContent.Content
+	# Unzip the EmbeddedContent Files
+	Set-Location $REPO/OuterBeyond
+	New-Item EmbeddedContent.Content
+	Set-Location EmbeddedContent.Content
 	tar -xf ../EmbeddedContent.Content.zip
-	cd ../../../
+	Set-Location ../../../
 
-	:: Initialize Repository for patches
-	git init %REPO%
-	(echo /bin/ & echo /obj/ & echo /.vs/ & echo /%NAME%.sln & echo /%NAME%.csproj.user & echo /OuterBeyond/EmbeddedContent.Content.zip) > %REPO%\.gitignore
-	git -C %REPO% add -A
-	git -C %REPO% commit -m "Initialized Repo"
-	git -C %REPO% tag "Untouched" HEAD
+	# Initialize Repository for patches
+	git init $REPO
+	"/bin/`r`n/obj/`r`n/.vs/`r`n/*.sln`r`n/*.csproj.user`r`n/OuterBeyond/EmbeddedContent.Content.zip" | Out-File $REPO\.gitignore
+	git -C $REPO add -A
+	git -C $REPO commit -m "Initialized Repo"
+	git -C $REPO tag "Untouched" HEAD
 
 
-	if ($NAME -eq "AxiomVerge") { git -C %REPO% apply -C 1 --recount --reject --ignore-whitespace ../startAV1.diff }
-	if ($NAME -eq "AxiomVerge2") { git -C %REPO% apply -C 1 --recount --reject --ignore-whitespace ../startAV2.diff }
-	git -C %REPO% add -A
-	git -C %REPO% commit -m "Compileable Repo"
-	git -C %REPO% tag "Start" HEAD
+	if ($NAME -eq "AxiomVerge") { git -C $REPO apply -C 1 --recount --reject --ignore-whitespace ../startAV1.diff }
+	if ($NAME -eq "AxiomVerge2") { git -C $REPO apply -C 1 --recount --reject --ignore-whitespace ../startAV2.diff }
+	git -C $REPO add -A
+	git -C $REPO commit -m "Compileable Repo"
+	git -C $REPO tag "Start" HEAD
 }
 
 Write-Output Finished
