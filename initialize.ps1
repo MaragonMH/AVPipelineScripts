@@ -17,11 +17,11 @@ if (!(Test-Path $REPO)){
 	dotnet tool install --global ilspycmd --version 7.1.0.6543
 
 	# Decompile executable
-	New-Item $REPO
+	New-Item $REPO -ItemType Directory
 	ilspycmd ../$EXEC -o $REPO -p -lv CSharp7_3
 
 	# Backup original executable
-	if (!(Test-Path backup)){ New-Item backup }
+	if (!(Test-Path backup)){ New-Item backup -ItemType Directory }
 	if (!(Test-Path backup\$EXEC)){ Copy-Item ..\$EXEC backup\$GAME-$GAMEVERSION.exe }
 
 	# Restore project
@@ -38,7 +38,7 @@ if (!(Test-Path $REPO)){
 
 	# Unzip the EmbeddedContent Files
 	Set-Location $REPO/OuterBeyond
-	if (!(Test-Path EmbeddedContent.Content)){ New-Item EmbeddedContent.Content }
+	if (!(Test-Path EmbeddedContent.Content)){ New-Item EmbeddedContent.Content -ItemType Directory }
 	Set-Location EmbeddedContent.Content
 	tar -xf ../EmbeddedContent.Content.zip
 	Set-Location ../../../
