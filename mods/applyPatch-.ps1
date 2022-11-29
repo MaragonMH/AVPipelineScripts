@@ -8,11 +8,32 @@ $EXEC = "$NAME.exe"
 if ($NAME -eq "AxiomVerge"){ $GAME="AV1" }
 if ($NAME -eq "AxiomVerge2"){ $GAME="AV2" }
 $GAMEVERSION = "V$((Get-Item "AxiomVerge*.exe").VersionInfo.ProductVersion)"
-$REPO = "$GAME-$GAMEVERSION"
 
 # Get Platform (Steam/Epic)
 if (Test-Path CSteamworks.bundle/) { $PLATFORM="Steam" }
 else { $PLATFORM="Epic" }
+
+# Check for updates
+$CURRENTREMOTEGAMEVERSION = "V0.0.0.0"
+$CURRENTREMOTEMODVERSION = "V0.0.0"
+$RESULT = Invoke-WebRequest "https://api.github.com/repos/MaragonMH/AxiomVergeMods/contents"
+if($RESULT.StatusCode -ne 200) { Write-Error "FetchError: Something went wrong while fetching the download" -ErrorAction Stop }
+$RESULT.Content | ConvertFrom-Json | ForEach-Object{
+	$REMOTEFULLNAME = $_.name -replace ".{4}$"
+	$REMOTEGAME = $REMOTEFULLNAME.Split("-")[0]
+	$REMOTEMODNAME = $REMOTEFULLNAME.Split("-")[1]
+	$REMOTEMODVERSION = $REMOTEFULLNAME.Split("-")[2]
+	$REMOTEPLATFORM = $REMOTEFULLNAME.Split("-")[3]
+	$REMOTEGAMEVERSION = $REMOTEFULLNAME.Split("-")[4]
+}
+Write-Error "OutdatedGameError: Your game is outdated for the mod you are requesting" -ErrorAction Stop
+Write-Error "OutdatedModError: Your mod is outdated" -ErrorAction Stop
+
+# Download newer version if available
+if($OUTDATED){
+	$RESULT = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/MaragonMH/AxiomVergeMods/$NEWFULLNAME.zip" -OutFile "$NEWFULLNAME.zip"
+	if($RESULT.StatusCode -ne 200) { Write-Error "DownloadError: Something went wrong during the download" -ErrorAction Stop }
+}
 
 # Check required files
 if (!(Test-Path "bspatch.exe" -and (Test-Path "steam_appid.txt" -and $PLATFORM -eq "Steam"))){ 
@@ -25,7 +46,7 @@ $ERRORLEVEL = $ERRORS.IndexOf("PatchFileError")
 
 # Get Patch
 $CURRENTMODVERSION = "V0.0.0"
-(Get-Item *.patch).BaseName | %{
+(Get-Item *.patch).BaseName | ForEach-Object{
 	$PATCHGAME = $_.Split("-")[0]
 	$PATCHMODNAME = $_.Split("-")[1]
 	$PATCHMODVERSION = $_.Split("-")[2]
@@ -42,7 +63,7 @@ $CURRENTMODVERSION = "V0.0.0"
 	if(GENERATED-PARAMETER-MODNAME -ne $PATCHMODNAME){ continue }
 	$ERRORLEVEL = (($ERRORLEVEL, $ERRORS.IndexOf("ModNameError") | Measure-Object -Max).Maximum)
 
-	# Check Version
+	# Check Mod Version
 	if($CURRENTMODVERSION.Split(".")[0].Replace("V", "") -lt $PATCHMODVERSION.Split(".")[0].Replace("V", "")){ $CURRENTMODVERSION = $PATCHMODVERSION; continue }
 	if($CURRENTMODVERSION.Split(".")[0].Replace("V", "") -gt $PATCHMODVERSION.Split(".")[0].Replace("V", "")){ continue }
 	if($CURRENTMODVERSION.Split(".")[1] -lt $PATCHMODVERSION.Split(".")[1]){ $CURRENTMODVERSION = $PATCHMODVERSION; continue }
@@ -64,4 +85,5 @@ $FULLNAME = "$GAME-GENERATED-PARAMETER-MODNAME-$CURRENTMODVERSION-$PLATFORM-$GAM
 # Execute
 try { bspatch.exe "$EXEC $FULLNAME.exe $FULLNAME.patch" }
 catch { Write-Error "UnexpectedError: An unexpected error occured during the patch process." -ErrorAction Stop}
-Write-Output "Sucess".
+Write-Output "Sucessfully applied $FULLNAME.patch to $EXEC".
+Write-Output "Open $FULLNAME.exe to start your new mod"
