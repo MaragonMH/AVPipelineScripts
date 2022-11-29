@@ -13,8 +13,8 @@ if (Test-Path ../CSteamworks.bundle/) { $Platform="Steam" }
 else { $Platform="Epic" }
 
 # Get current version
-$Candidates = (Get-Item "$Game-GENERATED-PARAMETER-MODNAME-*-$Platform-*.exe").BaseName
-if($Candidates.Length -le 0) { $Candidates = (Get-Item "$Game-GENERATED-PARAMETER-MODNAME-*-$Platform-*.patch").BaseName}
+$Candidates = (Get-Item "$Game-GENERATED-PARAMETER-MODNAME-*-$Platform-$Gameversion.exe").BaseName
+if($Candidates.Length -le 0) { $Candidates = (Get-Item "$Game-GENERATED-PARAMETER-MODNAME-*-$Platform-$Gameversion.patch").BaseName}
 $Fullname = ($Candidates | Sort-Object { [version]($_.Split("-")[4])}, {[version]($_.Split("-")[2])})[-1]
 
 # Get most recent online version
